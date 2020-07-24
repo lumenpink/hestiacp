@@ -16,12 +16,15 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* 
 RUN mv /usr/bin/systemctl /usr/bin/systemctl.original
-COPY systemctl.wrapper /usr/bin/systemctl
-RUN chmod +x /usr/bin/systemctl
+COPY systemctl-wrapper /usr/bin/systemctl
+COPY mysql-initd /etc/init.d/mysql
+RUN chmod +x /usr/bin/systemctl /etc/init.d/mysql
+RUN mkdir /var/run/mysqld && chmod 777 /var/run/mysqld
 RUN mkdir -p /etc/network/if-pre-up.d
 RUN curl -O https://raw.githubusercontent.com/hestiacp/hestiacp/release/install/hst-install-ubuntu.sh \
     && pwgen -c -n -1 12 > $HOME/password.txt \
     && bash hst-install-ubuntu.sh \
+    -o yes -g yes -q yes \
     -e admin@hestiacp.local -s hestiacp.local \
     --password $(cat $HOME/password.txt) \
     -y no -f \
@@ -29,5 +32,5 @@ RUN curl -O https://raw.githubusercontent.com/hestiacp/hestiacp/release/install/
     && apt-get -yf autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-VOLUME ["/hestia", "/home", "/backup"]
+VOLUME ["/usr/local/hestia", "/home", "/backup"]
 EXPOSE 22 25 53 54 80 110 143 443 465 587 993 995 1194 3000 3306 5432 5984 6379 8083 10022 11211 27017
