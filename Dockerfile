@@ -15,16 +15,18 @@ RUN apt-get update \
     && apt-get -yf autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* 
-RUN mv /usr/bin/systemctl /usr/bin/systemctl.original
+#RUN mv /usr/bin/systemctl /usr/bin/systemctl.original
 COPY systemctl-wrapper /usr/bin/systemctl
 COPY mysql-initd /etc/init.d/mysql
+COPY hst-install-ubuntu.sh /tmp
+COPY vsftpd-initd /tmp/vsftpd
 RUN chmod +x /usr/bin/systemctl /etc/init.d/mysql
 RUN mkdir /var/run/mysqld && chmod 777 /var/run/mysqld
 RUN mkdir -p /etc/network/if-pre-up.d
-RUN curl -O https://raw.githubusercontent.com/hestiacp/hestiacp/release/install/hst-install-ubuntu.sh \
-    && pwgen -c -n -1 12 > $HOME/password.txt \
-    && bash hst-install-ubuntu.sh \
-    -o yes -g yes -q yes \
+RUN pwgen -c -n -1 12 > $HOME/password.txt \
+    && bash /tmp/hst-install-ubuntu.sh \
+    #-o yes -g yes -q yes \
+    -c no -i no -b no \
     -e admin@hestiacp.local -s hestiacp.local \
     --password $(cat $HOME/password.txt) \
     -y no -f \
