@@ -2,5 +2,5 @@
 if [ "$1" = 'start' -o "$1" = 'stop' -o "$1" = 'restart' ] ; then
     service $2 $1
 else
-    systemctl $*
+    systemctl.original $*
 fi
