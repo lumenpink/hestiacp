@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:rolling
 LABEL maintainer="Lohn <j@lo.hn>"
 ENV DEBIAN_FRONTEND=noninteractive \
     TERM=xterm 
